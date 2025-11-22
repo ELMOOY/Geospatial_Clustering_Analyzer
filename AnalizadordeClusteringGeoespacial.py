@@ -1361,14 +1361,9 @@ class ClusteringApp:
                 text += f"     Interpretación: Los valores en estas variables son los más altos de toda la región analizada.\n"
             
             # 2. Comparación con promedio global (Variables por encima de la media)
-            # Filtramos solo aquellas que NO sean máximos para no repetir información, o las incluimos como refuerzo.
-            # Vamos a incluir las que estan notablemente por encima (ej. > promedio)
             above_avg_mask = row > global_means
             above_vars = row.index[above_avg_mask].tolist()
             
-            # Si queremos ser muy selectivos, podemos poner solo las que no son maximos.
-            # Pero a veces es bueno ver el contexto completo.
-            # Filtremos las que NO son maximos para dar informacion adicional
             secondary_vars = [v for v in above_vars if v not in max_vars]
             
             if secondary_vars:
@@ -1409,13 +1404,8 @@ class ClusteringApp:
 
         for index, row in dataframe.iterrows():
             formatted_row = []
-            row_tags = [] # En treeview los tags son por fila, pero haremos un truco visual si es posible o simplificado
+            row_tags = [] 
             
-            # Nota: Tkinter Treeview básico no soporta color por celda fácilmente sin código complejo.
-            # Para simplificar: Resaltaremos la FILA entera si el grupo tiene el valor máximo de la PRIMERA variable seleccionada
-            # O mejor, pintaremos filas alternas para lectura.
-            
-            # ALTERNATIVA MEJORADA: Identificar qué columnas tienen máximos en esta fila
             is_max_row = False
             
             for col_name in cols:
@@ -1470,9 +1460,7 @@ class ClusteringApp:
         self.save_graph_button.config(state="disabled")
 
     def plot_dendrogram(self, linkage_matrix, title_info=""):
-        # --- MOSTRAR TOOLBAR ---
         self.toolbar_frame.pack(side="top", fill="x", before=self.canvas.get_tk_widget())
-        # ---
         self.ax.clear()
         R = dendrogram(
             linkage_matrix,
@@ -1534,9 +1522,7 @@ class ClusteringApp:
         self.save_graph_button.config(state="normal")
 
     def plot_data(self, labels=None, coords=None, medoids=None):
-        # --- OCULTAR TOOLBAR ---
         self.toolbar_frame.pack_forget()
-        # ---
         self.ax.clear()
         
         plot_coords = coords if coords is not None else self.coords_df
